@@ -2,6 +2,8 @@
 
 A research platform for designing AI writing tools that preserve student reasoning, encourage engagement with course materials, and make learning processes visible to teachers.
 
+**Live demo:** https://kishormorol.github.io/adaptive-ai-scaffold/
+
 ---
 
 ## Overview
@@ -16,46 +18,77 @@ Instead of providing direct answers by default, the system controls *when and ho
 
 ---
 
-## Core Idea
+## Screens
 
-We propose **adaptive AI scaffolding** for learning:
+### ✍️ Write
+The main student workspace. Includes an assignment header, reasoning gate, and paper-styled editor. The "Ask AI" button opens an inline guided flow — not a chat.
 
-- Students must **externalize reasoning** before receiving help  
-- AI assistance is **progressively revealed** (hint → critique → outline → answer)  
-- Responses are **grounded in course materials**  
-- All interactions are recorded as a **learning trace**  
-- Teachers gain visibility into **how work was produced**, not just the final output  
+### 🤖 Ask AI (inline flow)
+A 3-step guided interaction:
+1. **Context** — student describes what they've tried (enforced by gate strictness)
+2. **Kind of help** — tiered options ordered by how much thinking they leave to the student:
+   - Hint → Critique → Explain → Outline → Full answer (last resort, requires reflection)
+3. **Response** — grounded in course materials, with source cards and echo-back of the student's own draft
+
+### 🔍 Trace
+Before/after diff view of the student's draft across three snapshots. AI-authored spans are highlighted and hoverable — each links back to the AI event that produced it. Includes an interaction timeline and source grounding footnotes.
+
+### 👩‍🏫 Instructor
+Class roster with initial reasoning histogram, flags (students who used last-resort help), and AI usage breakdown. Clicking a student opens their trace with auto-surfaced "Key Moments" interpretation.
 
 ---
 
-## Key Features (MVP)
+## Reasoning Gate
 
-### ✍️ Reasoning-First Writing Workspace
-- Students write their initial thoughts before requesting help
-- Encourages active engagement and reduces passive AI reliance
+Controls how strictly students must write before AI unlocks. Configurable via the top bar or the § Tweaks panel:
 
-### 🧠 Adaptive AI Assistance
-AI support is not static. It depends on student context:
-- Hint
-- Critique
-- Explanation
-- Outline
-- Full answer (last resort)
+| Mode | Behavior |
+|------|----------|
+| **Soft** | Suggested minimum; skippable |
+| **Medium** | Word threshold required; reason to skip |
+| **Hard** | AI disabled until threshold met; requires structured reflection before any AI use |
 
-### 📚 Source-Grounded Responses
-- AI retrieves and uses only instructor-provided materials
-- Prevents bypassing readings and encourages source engagement
+---
 
-### 🔍 Learning Trace Logging
-- Tracks drafts, AI interactions, and revisions
-- Enables analysis of reasoning and learning behavior
+## Tech Stack
 
-### 👩‍🏫 Teacher Visibility (Planned)
-- Dashboard showing:
-  - student drafts
-  - AI usage patterns
-  - revision history
-  - source usage
+- **Frontend:** Next.js + CSS variables (paper/lab-notebook aesthetic)
+- **Deployment:** GitHub Pages (static export)
+- **Backend (planned):** FastAPI
+- **Database (planned):** Supabase / PostgreSQL
+- **AI (planned):** LLM API + Retrieval-Augmented Generation (RAG)
+
+---
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Project Structure
+
+```
+components/
+  data.js          # Assignment, sources, stages, class roster
+  primitives.jsx   # Icons, TopBar, FigCaption, SourceSnippet, MiniBar
+  writing.jsx      # Student workspace + reasoning gate
+  askai.jsx        # 3-step Ask AI flow + HELP_KINDS
+  trace.jsx        # Diff view, timeline, actions panel
+  teacher.jsx      # Instructor dashboard + student detail
+  tweaks.jsx       # Gate strictness panel
+pages/
+  index.jsx        # App shell + screen routing
+  _app.jsx         # Global CSS import
+styles/
+  globals.css      # Design system (paper tones, typography, animations)
+project/           # Original HTML/CSS prototype (reference)
+```
 
 ---
 
@@ -74,11 +107,11 @@ This project investigates:
 
 ## Planned Study
 
-We will evaluate three conditions:
+Three conditions will be compared:
 
 1. **Standard chatbot**
-2. **Static scaffolded AI (limited assistance)**
-3. **Adaptive scaffolded AI (this system)**
+2. **Static scaffolded AI** (limited assistance)
+3. **Adaptive scaffolded AI** (this system)
 
 ### Measures
 - Writing quality
@@ -86,17 +119,3 @@ We will evaluate three conditions:
 - Source engagement
 - AI usage behavior
 - Teacher understanding of student learning
-
----
-
-## Tech Stack (Initial)
-
-- Frontend: Next.js + Tailwind CSS  
-- Backend: FastAPI  
-- Database: Supabase / PostgreSQL  
-- AI: LLM API + Retrieval-Augmented Generation (RAG)  
-- Deployment: Vercel (frontend), Railway/Render (backend)  
-
----
-
-## Project Structure
